@@ -62,6 +62,16 @@ climate:
 - **Power**: any active mode sends a 14-byte command whose power bits are set, which also turns the unit on from off. `Off` sends the 21-byte extended power-off frame. No separate power-on frame is required — the same behavior as the hardware-tested native [`samsung`](https://github.com/esphome/esphome/pull/8004) component.
 - The reverse-engineered protocol (byte layout, field codes, checksum, measured timings) is documented in [`samsung-ac-protocol.md`](samsung-ac-protocol.md).
 
+## Wiring & range
+
+The component only *generates* the IR frames — transmit range depends entirely on your emitter hardware.
+
+- Drive an IR transmitter (e.g. an HX1838-T / KY-005-style "IR Transmitter" module, or a bare IR LED) from a `remote_transmitter` pin — GPIO21 in the example.
+- **Power the module from 5V, not 3.3V.** These 3-pin modules have an onboard driver transistor plus a current-limiting resistor (often 220Ω), so the LED runs off `VCC`; 5V roughly doubles LED current versus 3.3V. The signal/`DAT` pin stays 3.3V-logic safe.
+- **`carrier_duty_percent`**: 50% is standard. Raising it toward 80–90% puts more energy into each burst and can noticeably extend range on a weak, resistor-limited module — safe there because the series resistor caps the current. If you later fit a high-power LED with a proper driver (100 mA+), drop back to ~33–50% so the LED doesn't overheat.
+- **Aim matters**: clear-lens IR LEDs are narrow-beam — point it at the AC's IR window.
+- Still short (~2–3 m)? The onboard resistor is the ceiling. Replace it with ~47Ω, or drive a high-power 940 nm LED via an external transistor/MOSFET off 5V with a ~22Ω series resistor, for 6–8 m.
+
 ## Verify the encoder (no hardware needed)
 
 ```bash
