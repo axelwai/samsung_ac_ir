@@ -1,0 +1,54 @@
+# Example: Samsung AC as a real Home Assistant climate entity (ESP32-C3 Super Mini).
+# Put the `components/` folder next to this YAML (or point `path:` at it).
+esphome:
+  name: samsung-ac
+  friendly_name: Samsung AC
+
+esp32:
+  variant: esp32c3
+  flash_size: 4MB
+  framework:
+    type: esp-idf
+
+logger:
+  hardware_uart: USB_SERIAL_JTAG   # frees GPIO21 for IR on the C3 Super Mini
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+ota:
+  - platform: esphome
+    password: !secret ota_password
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  output_power: 8.5dB              # C3 Super Mini WiFi stability fix
+
+external_components:
+  - source:
+      type: local
+      path: components
+
+remote_transmitter:
+  id: ir_tx
+  pin:
+    number: GPIO21                 # HX1838-T signal
+  carrier_duty_percent: 50%
+  non_blocking: true
+
+# Optional: read state back with a receiver (e.g. the learner's ir_rf_proxy / a demodulator).
+# A wide tolerance is important for decoding the multi-section Samsung frames reliably
+# (the reference native `samsung` component, ESPHome PR #8004, recommends 55%).
+# remote_receiver:
+#   id: ir_rx
+#   pin:
+#     number: GPIO20
+#     inverted: true
+#   tolerance: 55%
+
+climate:
+  - platform: samsung_ac_ir
+    name: "Bedroom AC"
+    # receiver_id: ir_rx           # uncomment if you added remote_receiver
+    # Fan speeds: Auto / Low / Medium / High (standard) plus a custom "Turbo" speed
+    # (the remote's 4th / L4 speed, fan code 7) exposed automatically by the component.
