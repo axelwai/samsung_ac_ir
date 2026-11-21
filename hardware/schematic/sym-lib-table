@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "samsung_ac_ir")(type "KiCad")(uri "${KIPRJMOD}/samsung_ac_ir.kicad_sym")(options "")(descr "Samsung AC IR custom parts"))
+)

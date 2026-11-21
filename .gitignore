@@ -4,3 +4,17 @@ __pycache__/
 *.zip
 .esphome/
 secrets.yaml
+
+# KiCad per-user / generated files
+*.kicad_prl
+*-backups/
+fp-info-cache
+_autosave-*
+*.lck
+
+# Generated exports kept out of git (only the two SVGs are committed)
+hardware/schematic/*.pdf
+hardware/schematic/wiring.png
+hardware/schematic/wiring.bom.tsv
+hardware/schematic/wiring.html
+hardware/schematic/wiring.tmp

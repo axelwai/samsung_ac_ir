@@ -1,0 +1,77 @@
+# Samsung AC IR controller - point-to-point harness for a build without a board (WireViz 0.4).
+# Same circuit as samsung_ac_ir.kicad_sch (the master: keep this file in step with it).
+# Wire colours are a suggestion.
+# Render: wireviz wiring.yml
+metadata:
+  title: Samsung AC IR controller - harness
+
+connectors:
+  ESP:
+    type: ESP32-C3 Super Mini
+    subtype: "silk labels: 5V, G, 3.3, 20, 21"
+    pinlabels: [5V, G, 3V3, GPIO20, GPIO21]
+  RX:
+    type: IR receiver module
+    subtype: 3-pin header, dome up
+    pinlabels: [OUT, VCC, GND]
+  D1:
+    type: IR LED 5 mm
+    subtype: clear, points up
+    pinlabels: [A (long leg), K (short leg)]
+  Q1:
+    type: 2N2222A NPN (TO-92)
+    subtype: flat face toward you, E-B-C
+    pinlabels: [E, B, C]
+  R12:
+    type: 2 x 10 ohm in series (20 ohm)
+    pinlabels: [a, b]
+  R3:
+    type: 1 kohm base resistor
+    pinlabels: [a, b]
+  GND_SPLICE:
+    style: simple
+    type: GND splice
+
+cables:
+  W_5V:  {wirecount: 1, colors: [RD], notes: "5V to LED resistors"}
+  W_LA:  {wirecount: 1, colors: [RD], notes: "short lead or direct solder"}
+  W_LK:  {wirecount: 1, colors: [BU], notes: "short lead or direct solder"}
+  W_TX:  {wirecount: 1, colors: [YE], notes: "GPIO21 = IR TX"}
+  W_B:   {wirecount: 1, colors: [YE], notes: "short lead or direct solder"}
+  W_G:   {wirecount: 1, colors: [BK]}
+  W_GE:  {wirecount: 1, colors: [BK]}
+  W_GR:  {wirecount: 1, colors: [BK]}
+  W_3V3: {wirecount: 1, colors: [OG], notes: "3.3V to receiver VCC"}
+  W_RX:  {wirecount: 1, colors: [GN], notes: "GPIO20 = IR RX"}
+
+connections:
+  - - ESP: ["5V"]
+    - W_5V: [1]
+    - R12: [a]
+  - - R12: [b]
+    - W_LA: [1]
+    - D1: [A (long leg)]
+  - - D1: [K (short leg)]
+    - W_LK: [1]
+    - Q1: [C]
+  - - ESP: [GPIO21]
+    - W_TX: [1]
+    - R3: [a]
+  - - R3: [b]
+    - W_B: [1]
+    - Q1: [B]
+  - - ESP: [G]
+    - W_G: [1]
+    - GND_SPLICE
+  - - GND_SPLICE
+    - W_GE: [1]
+    - Q1: [E]
+  - - GND_SPLICE
+    - W_GR: [1]
+    - RX: [GND]
+  - - ESP: [3V3]
+    - W_3V3: [1]
+    - RX: [VCC]
+  - - ESP: [GPIO20]
+    - W_RX: [1]
+    - RX: [OUT]
